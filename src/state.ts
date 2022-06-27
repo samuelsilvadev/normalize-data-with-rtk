@@ -25,18 +25,22 @@ const booksSlice = createSlice({
   name: "books",
   initialState,
   reducers: {
-    loadBooks: (state, { payload }: PayloadAction<Book[]>) => {
+    loadBooks: (state) => {
       state.loading = true;
+    },
+    loadedBooks: (state, { payload }: PayloadAction<Book[]>) => {
+      state.loading = false;
       booksAdapter.addMany(state, payload);
     }
   }
 });
 
-export const { loadBooks } = booksSlice.actions;
+export const { loadBooks, loadedBooks } = booksSlice.actions;
 export const {
   selectAll: selectAllBooks,
   selectById: selectBookById
 } = booksAdapter.getSelectors((state: State) => state.books);
+export const selectIsLoading = (state: State) => state.books.loading;
 
 export const store = configureStore({
   reducer: {
