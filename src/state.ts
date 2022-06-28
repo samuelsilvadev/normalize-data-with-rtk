@@ -5,6 +5,14 @@ import {
   PayloadAction
 } from "@reduxjs/toolkit";
 
+const booksAdapter = createEntityAdapter<Book>();
+const initialState = booksAdapter.getInitialState();
+export const {
+  selectAll: selectAllBooks,
+  selectById: selectBookById,
+  selectEntities: selectBookEntities
+} = booksAdapter.getSelectors((state: State) => state.books);
+
 type Book = {
   id: string;
   name: string;
@@ -15,24 +23,10 @@ export type BookInitialState = {
   books: Book[];
 };
 
-const booksAdapter = createEntityAdapter<Book>();
-
-const initialState = booksAdapter.getInitialState({
-  loading: false
-});
-
 const booksSlice = createSlice({
   name: "books",
   initialState,
-  reducers: {
-    loadBooks: (state) => {
-      state.loading = true;
-    },
-    loadedBooks: (state, { payload }: PayloadAction<Book[]>) => {
-      state.loading = false;
-      booksAdapter.addMany(state, payload);
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(
       loadedHistory.type,
@@ -40,16 +34,45 @@ const booksSlice = createSlice({
         booksAdapter.addMany(state, payload);
       }
     );
+    builder.addCase(
+      loadedMainBooks.type,
+      (state, { payload }: PayloadAction<Book[]>) => {
+        booksAdapter.addMany(state, payload);
+      }
+    );
   }
 });
 
-export const { loadBooks, loadedBooks } = booksSlice.actions;
-export const {
-  selectAll: selectAllBooks,
-  selectById: selectBookById,
-  selectEntities: selectBookEntities
-} = booksAdapter.getSelectors((state: State) => state.books);
-export const selectIsLoading = (state: State) => state.books.loading;
+export type MainBooksInitialState = {
+  loading: boolean;
+  ids: string[];
+};
+
+const mainBooksInitialState: MainBooksInitialState = {
+  loading: false,
+  ids: []
+};
+
+const mainBooksSlice = createSlice({
+  name: "mainBooks",
+  initialState: mainBooksInitialState,
+  reducers: {
+    loadMainBooks: (state) => {
+      state.loading = true;
+    },
+    loadedMainBooks: (state, { payload }: PayloadAction<Book[]>) => {
+      state.loading = false;
+
+      const ids = payload.map((book) => book.id);
+
+      state.ids = ids;
+    }
+  }
+});
+
+export const { loadMainBooks, loadedMainBooks } = mainBooksSlice.actions;
+export const selectIsLoading = (state: State) => state.mainBooks.loading;
+export const selectMainBooksIds = (state: State) => state.mainBooks.ids;
 
 export type HistoryInitialState = {
   loading: boolean;
@@ -85,6 +108,7 @@ export const selectHistoryBooksIds = (state: State) => state.history.ids;
 export const store = configureStore({
   reducer: {
     books: booksSlice.reducer,
+    mainBooks: mainBooksSlice.reducer,
     history: historySlice.reducer
   }
 });

@@ -2,16 +2,16 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import {
-  loadBooks,
-  loadedBooks,
   loadedHistory,
+  loadedMainBooks,
   loadHistory,
-  selectAllBooks,
+  loadMainBooks,
   selectBookById,
   selectBookEntities,
   selectHistoryBooksIds,
   selectIsHistoryLoading,
   selectIsLoading,
+  selectMainBooksIds,
   State
 } from "./state";
 import { Routes, Route } from "react-router-dom";
@@ -38,11 +38,11 @@ function useLoadBooks() {
   const dispath = useDispatch();
 
   useEffect(() => {
-    dispath(loadBooks());
+    dispath(loadMainBooks());
 
     setTimeout(() => {
       dispath(
-        loadedBooks([
+        loadedMainBooks([
           {
             id: "1",
             name: "Da vinci's code"
@@ -60,7 +60,9 @@ function useLoadBooks() {
 function Books() {
   useLoadBooks();
 
-  const books = useSelector(selectAllBooks);
+  const allBooksMap = useSelector(selectBookEntities);
+  const mainBooksIds = useSelector(selectMainBooksIds);
+  const books = mainBooksIds.map((id) => allBooksMap[id]).filter(Boolean);
   const isLoading = useSelector(selectIsLoading);
 
   return (
