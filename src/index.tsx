@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import * as ReactDOMClient from "react-dom/client";
 import { Provider } from "react-redux";
-import { store } from "./state";
+import { store } from "./state/store";
 
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";

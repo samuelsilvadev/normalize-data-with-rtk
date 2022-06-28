@@ -1,19 +1,20 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { State } from "./state/store";
 import {
   loadedHistory,
-  loadedMainBooks,
   loadHistory,
-  loadMainBooks,
-  selectBookById,
-  selectBookEntities,
   selectHistoryBooksIds,
-  selectIsHistoryLoading,
+  selectIsHistoryLoading
+} from "./state/history";
+import {
+  loadedMainBooks,
+  loadMainBooks,
   selectIsLoading,
-  selectMainBooksIds,
-  State
-} from "./state";
+  selectMainBooksIds
+} from "./state/main-books";
+import { selectBookById, selectBookEntities } from "./state/books";
 import { Routes, Route } from "react-router-dom";
 import "./styles.css";
 
