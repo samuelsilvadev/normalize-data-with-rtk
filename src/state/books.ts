@@ -3,6 +3,7 @@ import {
   createSlice,
   PayloadAction
 } from "@reduxjs/toolkit";
+import { loadedCurrentBook } from "./current-book";
 import { loadedHistory } from "./history";
 import { loadedMainBooks } from "./main-books";
 import { State } from "./store";
@@ -35,6 +36,12 @@ export const booksSlice = createSlice({
       loadedMainBooks.type,
       (state, { payload }: PayloadAction<Book[]>) => {
         booksAdapter.addMany(state, payload);
+      }
+    );
+    builder.addCase(
+      loadedCurrentBook.type,
+      (state, { payload }: PayloadAction<Book>) => {
+        booksAdapter.addOne(state, payload);
       }
     );
   }

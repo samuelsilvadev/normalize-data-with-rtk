@@ -17,6 +17,7 @@ import {
 import { selectBookById, selectBookEntities } from "./state/books";
 import { Routes, Route } from "react-router-dom";
 import "./styles.css";
+import { loadCurrentBook, loadedCurrentBook } from "./state/current-book";
 
 function Header() {
   return (
@@ -32,6 +33,34 @@ function Header() {
         </ul>
       </nav>
     </header>
+  );
+}
+
+function useLoadCurrentBook() {
+  const dispath = useDispatch();
+
+  useEffect(() => {
+    dispath(loadCurrentBook());
+
+    setTimeout(() => {
+      dispath(
+        loadedCurrentBook({
+          id: "6",
+          name: "Hidden fortress"
+        })
+      );
+    }, 1000);
+  }, [dispath]);
+}
+
+function Footer() {
+  useLoadCurrentBook();
+
+  return (
+    <footer>
+      <h3>Current Read: None</h3>
+      <button>ramdonly select a book to read next</button>
+    </footer>
   );
 }
 
@@ -63,7 +92,7 @@ function Books() {
 
   const allBooksMap = useSelector(selectBookEntities);
   const mainBooksIds = useSelector(selectMainBooksIds);
-  const books = mainBooksIds.map((id) => allBooksMap[id]).filter(Boolean);
+  const books = mainBooksIds.map((id) => allBooksMap[id]);
   const isLoading = useSelector(selectIsLoading);
 
   return (
@@ -160,6 +189,7 @@ export default function App() {
         <Route path="/books/:id" element={<Book />} />
         <Route path="/history" element={<History />} />
       </Routes>
+      <Footer />
     </div>
   );
 }
